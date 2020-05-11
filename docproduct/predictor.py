@@ -44,8 +44,7 @@ class QAEmbed(object):
             ffn_weight_file=None,
             bert_ffn_weight_file=None,
             load_pretrain=True,
-            with_question=True,
-            with_answer=True):
+            with_question=True):
         super(QAEmbed, self).__init__()
 
         config_file = os.path.join(pretrained_path, 'bert_config.json')
@@ -75,8 +74,7 @@ class QAEmbed(object):
 
         # build mode in order to load
         question = 'fake' if with_question else None
-        answer = 'fake' if with_answer else None
-        self.predict(questions=question, answers=answer, dataset=False)
+        self.predict(questions=question, dataset=False)
         load_weight(self.model, bert_ffn_weight_file, ffn_weight_file)
 
     def _type_check(self, inputs):
@@ -90,35 +88,18 @@ class QAEmbed(object):
                     'inputs are supposed to be str of list of str, got {0} instead.'.format(type(inputs)))
             return inputs
 
-    def _make_inputs(self, questions=None, answers=None, dataset=True):
+    def _make_inputs(self, questions=None, dataset=True):
 
-        if questions:
-            data_size = len(questions)
-            q_feature_dict = defaultdict(list)
-            for q in questions:
-                q_feature = convert_text_to_feature(
-                    q, tokenizer=self.tokenizer, max_seq_length=self.max_seq_length)
-                q_feature_dict['q_input_ids'].append(q_feature[0])
-                q_feature_dict['q_input_masks'].append(q_feature[1])
-                q_feature_dict['q_segment_ids'].append(q_feature[2])
+        data_size = len(questions)
+        q_feature_dict = defaultdict(list)
+        for q in questions:
+            q_feature = convert_text_to_feature(
+                q, tokenizer=self.tokenizer, max_seq_length=self.max_seq_length)
+            q_feature_dict['q_input_ids'].append(q_feature[0])
+            q_feature_dict['q_input_masks'].append(q_feature[1])
+            q_feature_dict['q_segment_ids'].append(q_feature[2])
 
-        if answers:
-            data_size = len(answers)
-            a_feature_dict = defaultdict(list)
-            for a in answers:
-                a_feature = convert_text_to_feature(
-                    a, tokenizer=self.tokenizer, max_seq_length=self.max_seq_length)
-                a_feature_dict['a_input_ids'].append(a_feature[0])
-                a_feature_dict['a_input_masks'].append(a_feature[1])
-                a_feature_dict['a_segment_ids'].append(a_feature[2])
-
-        if questions and answers:
-            q_feature_dict.update(a_feature_dict)
-            model_inputs = q_feature_dict
-        elif questions:
-            model_inputs = q_feature_dict
-        elif answers:
-            model_inputs = a_feature_dict
+        model_inputs = q_feature_dict
 
         model_inputs = {k: tf.convert_to_tensor(
             np.stack(v, axis=0)) for k, v in model_inputs.items()}
@@ -128,16 +109,12 @@ class QAEmbed(object):
 
         return model_inputs
 
-    def predict(self, questions=None, answers=None, dataset=True):
+    def predict(self, questions=None, dataset=True):
 
         # type check
         questions = self._type_check(questions)
-        answers = self._type_check(answers)
 
-        if questions is not None and answers is not None:
-            assert len(questions) == len(answers)
-
-        model_inputs = self._make_inputs(questions, answers, dataset)
+        model_inputs = self._make_inputs(questions, dataset)
         model_outputs = []
 
         if dataset:

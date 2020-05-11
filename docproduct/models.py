@@ -85,42 +85,14 @@ class MedicalQAModelwithBert(tf.keras.Model):
             dropout=dropout,
             residual=residual,
             name='q_ffn')
-        self.a_ffn_layer = FFN(
-            hidden_size=hidden_size,
-            dropout=dropout,
-            residual=residual,
-            name='a_ffn')
         self.layer_ind = layer_ind
 
     def call(self, inputs):
 
-        if 'q_input_ids' in inputs:
-            with_question = True
-        else:
-            with_question = False
-
-        if 'a_input_ids' in inputs:
-            with_answer = True
-        else:
-            with_answer = False
-        # according to USE, the DAN network average embedding across tokens
-        if with_question:
-            q_bert_embedding = self.biobert(
+        q_bert_embedding = self.biobert(
                 (inputs['q_input_ids'], inputs['q_segment_ids'], inputs['q_input_masks']))[self.layer_ind]
-            q_bert_embedding = tf.reduce_mean(q_bert_embedding, axis=1)
-        if with_answer:
-            a_bert_embedding = self.biobert(
-                (inputs['a_input_ids'], inputs['a_segment_ids'], inputs['a_input_masks']))[self.layer_ind]
-            a_bert_embedding = tf.reduce_mean(a_bert_embedding, axis=1)
+        q_bert_embedding = tf.reduce_mean(q_bert_embedding, axis=1)
 
-        if with_question:
-            q_embedding = self.q_ffn_layer(q_bert_embedding)
-            output = q_embedding
-        if with_answer:
-            a_embedding = self.a_ffn_layer(a_bert_embedding)
-            output = a_embedding
-
-        if with_question and with_answer:
-            output = tf.stack([q_embedding, a_embedding], axis=1)
+        output = self.q_ffn_layer(q_bert_embedding)
 
         return output
