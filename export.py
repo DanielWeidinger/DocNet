@@ -1,5 +1,20 @@
+import tensorflow as tf
 from docproduct.predictor import RetreiveQADoc
 
+class DocNetModule(tf.Module):
+    def __init__(self, model):
+        self.model = model
+
+    @tf.function(input_signature=[(tf.TensorSpec(shape=(None, 256), dtype=tf.int32),
+                                tf.TensorSpec(shape=(None, 256), dtype=tf.int32),
+                                tf.TensorSpec(shape=(None, 256), dtype=tf.int32))])
+    def answers(self, inputs):
+        result = self.model(inputs)
+        return { "answers": result }
+
+    @tf.function(input_signature=[])
+    def test(self):
+        return { "test": "succesfull"}
 
 pretrained_path = 'BioBertFolder/biobert_v1.0_pubmed_pmc/'
 # ffn_weight_file = None
@@ -21,4 +36,7 @@ save_path = './SavedModels/DocNet/1'
 
 model.summary()
 
-model.save(save_path)
+##model.save(save_path)
+
+module = DocNetModule(model=model)
+tf.saved_model.save(module, save_path, signatures={ 'answers': module.answers, 'test': module.test })
