@@ -134,3 +134,11 @@ gpt_2/output.txt
 models/
 qa_embeddings/
 *.code-work*
+
+BioBert.tar.gz
+BioBertFolder
+DataAndCheckpoint.zip
+Float16EmbeddingsExpanded5-27-19.pkl
+faiss
+ffn_cross_entropy
+newFolder

@@ -11,7 +11,7 @@ import pandas as pd
 import tensorflow as tf
 from tqdm import tqdm
 
-import gpt2_estimator
+#import gpt2_estimator
 from docproduct.dataset import convert_text_to_feature
 from docproduct.models import MedicalQAModelwithBert
 from docproduct.tokenization import FullTokenizer
@@ -20,7 +20,7 @@ from keras_bert.loader import checkpoint_loader
 
 def load_weight(model, bert_ffn_weight_file=None, ffn_weight_file=None):
     if bert_ffn_weight_file:
-        model.load_weights(bert_ffn_weight_file)
+        model.load_weights(bert_ffn_weight_file).expect_partial()
     elif ffn_weight_file:
         loader = checkpoint_loader(ffn_weight_file)
         model.get_layer('q_ffn').set_weights(
@@ -299,7 +299,8 @@ class GenerateQADoc(object):
         #     r = result_list[0].group(1)
         # except (AttributeError, IndexError):
         #     r = topk_answer[0]
-        refine1 = re.sub('`QUESTION:.*?`ANSWER:','' , str(raw_output[0]) , flags=re.DOTALL)
+        refine1 = re.sub('`QUESTION:.*?`ANSWER:', '',
+                         str(raw_output[0]), flags=re.DOTALL)
         refine2 = refine1.split('`QUESTION: ')[0]
         return refine2
 

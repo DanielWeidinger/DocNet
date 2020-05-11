@@ -6,7 +6,7 @@ import tensorflow as tf
 # import tensorflow.compat.v1 as tf
 import tensorflow_estimator as tf_estimator
 
-import gpt2_estimator
+##import gpt2_estimator
 
 from docproduct.mqa_load_dataset import Sampler, load_dataset
 
