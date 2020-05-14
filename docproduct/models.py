@@ -89,8 +89,9 @@ class MedicalQAModelwithBert(tf.keras.Model):
 
     def call(self, inputs):
 
-        q_bert_embedding = self.biobert(
-                (inputs['q_input_ids'], inputs['q_segment_ids'], inputs['q_input_masks']))[self.layer_ind]
+        q_bert_embedding = self.biobert(inputs)[self.layer_ind] 
+                #(inputs['q_input_ids'], inputs['q_segment_ids'], inputs['q_input_masks'])
+
         q_bert_embedding = tf.reduce_mean(q_bert_embedding, axis=1)
 
         output = self.q_ffn_layer(q_bert_embedding)

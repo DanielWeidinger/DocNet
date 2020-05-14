@@ -25,7 +25,7 @@ doc = RetreiveQADoc(pretrained_path=pretrained_path,
                     ffn_weight_file=None,
                     bert_ffn_weight_file=bert_ffn_weight_file,
                     embedding_file=embedding_file)
-question_text = "My back hurts"  # @param {type:"string"}
+question_text = ["My back hurts"]  # @param {type:"string"}
 search_similarity_by = 'answer'  # @param ['answer', "question"]
 number_results_toReturn = 10  # @param {type:"number"}
 answer_only = True  # @param ["False", "True"] {type:"raw"}
@@ -36,7 +36,13 @@ save_path = './SavedModels/DocNet/1'
 
 model.summary()
 
-##model.save(save_path)
+print('')
+for jk in range(len(returned_results)):
+    print("Result ", jk+1)
+    print(returned_results[jk])
+    print('')
 
-module = DocNetModule(model=model)
-tf.saved_model.save(module, save_path, signatures={ 'answers': module.answers, 'test': module.test })
+#model.save(save_path)
+
+#module = DocNetModule(model=model)
+#tf.saved_model.save(module, save_path, signatures={ 'answers': module.answers, 'test': module.test })
