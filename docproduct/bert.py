@@ -3,6 +3,7 @@ import json
 import tensorflow as tf
 from tensorflow import keras
 import tensorflow.keras.backend as K
+import numpy as np
 
 from keras_bert.keras_pos_embd import PositionEmbedding
 from keras_bert.layers import get_inputs, get_embedding, TokenEmbedding, EmbeddingSimilarity, Masked, Extract
@@ -105,6 +106,7 @@ class Bert(keras.Model):
                 name='%s-Norm' % feed_forward_name,
             ))
 
+    @tf.function(input_signature=[tf.TensorSpec(shape=(3, None, 256), dtype=tf.int32, name="bert_inputs")])
     def call(self, inputs):
 
         embeddings = [
@@ -209,5 +211,8 @@ def build_model_from_config(config_file,
         trainable=trainable,
     )
     if build:
-        model.build(input_shape=[(None, None), (None, None), (None, None)])
+        #model.build(input_shape=[(None, None), (None, None), (None, None)])
+        inputs = tf.constant(0, shape=(3, 1, 256), dtype=tf.int32)
+        model(inputs)
+
     return model, config

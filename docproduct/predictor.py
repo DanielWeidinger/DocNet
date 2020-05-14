@@ -101,7 +101,7 @@ class QAEmbed(object):
 
         model_inputs = q_feature_dict
 
-        model_inputs = np.array(list(tf.convert_to_tensor(np.stack(v, axis=0)) for k, v in model_inputs.items()))
+        model_inputs = np.array(list(tf.convert_to_tensor(np.stack(v, axis=0)) for k, v in model_inputs.items()), dtype=np.int32)
 
         #model_inputs = {k: tf.convert_to_tensor(
         #    np.stack(v, axis=0)) for k, v in model_inputs.items()}
