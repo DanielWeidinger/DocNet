@@ -33,6 +33,7 @@ data = json.dumps({
 
 print('Send request...')
 
-res = requests.post('http://localhost:8501/v1/models/docnet:predict', data=data, headers=headers)
-print(res.content)
+res = requests.post('http://34.78.190.89:8501/v1/models/docnet:predict', data=data, headers=headers)
+predictions = json.loads(res.content)["predictions"]
+print(predictions)
 #returned_results = doc.predict(question_text, search_by=search_similarity_by, topk=number_results_toReturn, answer_only=answer_only)
