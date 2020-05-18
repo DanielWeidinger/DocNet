@@ -16,30 +16,30 @@
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: docnet-deployment
+  name: faiss-deployment
 spec:
   replicas: 1
   template:
     metadata:
       labels:
-        app: docnet-server
+        app: faiss-server
     spec:
       containers:
-        - name: docnet-container
-          image: gcr.io/dobert-277308/docnet@sha256:808405ae0d2a756538d88a2c96a0f19be65492cda7b9e8aee5689fbfd9fd8d92
+        - name: faiss-container
+          image: gcr.io/dobert-277308/faiss@sha256:1a738ce6f6b5cb263ec713071eb7efa9844b70917d49662d271c3fd48273f88e
           ports:
-            - containerPort: 8501
+            - containerPort: 7000
 ---
 apiVersion: v1
 kind: Service
 metadata:
   labels:
-    run: docnet-service
-  name: docnet-service
+    run: faiss-service
+  name: faiss-service
 spec:
   ports:
-    - port: 8501
-      targetPort: 8501
+    - port: 7000
+      targetPort: 7000
   selector:
-    app: docnet-server
+    app: faiss-server
   type: LoadBalancer
