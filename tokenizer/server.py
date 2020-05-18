@@ -37,8 +37,8 @@ class Server(object):
 
     def __init__(self, port):
         self.port = port
-        self.host = '192.168.43.129'
-        ReqHandler.tok = FullTokenizer(os.path.abspath('/home/daniel/Desktop/DoctorRobert/Backend/Cluster/tokenizer/vocab.txt'))
+        self.host = ''
+        ReqHandler.tok = FullTokenizer(os.path.abspath('./vocab.txt'))
         self.httpserver = HTTPServer((self.host, self.port), ReqHandler)
 
     def start(self):
