@@ -16,30 +16,30 @@
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: docnet-deployment
+  name: tokenizer-deployment
 spec:
   replicas: 1
   template:
     metadata:
       labels:
-        app: docnet-server
+        app: tokenizer-server
     spec:
       containers:
-        - name: docnet-container
-          image: gcr.io/dobert-277308/docnet@sha256:808405ae0d2a756538d88a2c96a0f19be65492cda7b9e8aee5689fbfd9fd8d92
+        - name: tokenizer-container
+          image: gcr.io/dobert-277308/tokenizer@sha256:92127b654bb4a0c1aab2c63df77677ac229488eb649101cb0f6b69aac076332e
           ports:
-            - containerPort: 8501
+            - containerPort: 8000
 ---
 apiVersion: v1
 kind: Service
 metadata:
   labels:
-    run: docnet-service
-  name: docnet-service
+    run: tokenizer-service
+  name: tokenizer-service
 spec:
   ports:
-    - port: 8501
-      targetPort: 8501
+    - port: 8000
+      targetPort: 8000
   selector:
-    app: docnet-server
+    app: tokenizer-server
   type: LoadBalancer
