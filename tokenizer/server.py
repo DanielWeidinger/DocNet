@@ -2,7 +2,7 @@ import os
 import json
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from io import BytesIO
-from tokenization import FullTokenizer
+from tokenization import FullTokenizer, convert_text_to_feature
 
 class ReqHandler(BaseHTTPRequestHandler):
 
@@ -25,10 +25,12 @@ class ReqHandler(BaseHTTPRequestHandler):
             self.send_response(200)
             self.end_headers()
             response = BytesIO()
-
-            tokens = self.tok.tokenize(body['question'])
-
-            response.write(str.encode(body['question']))
+            inputs = convert_text_to_feature(body['question'], tokenizer=self.tok, max_seq_length=256)
+            x = list()
+            x.append(inputs[0].tolist())
+            x.append(inputs[1].tolist())
+            x.append(inputs[2].tolist())
+            response.write(str.encode(json.dumps(x)))
             self.wfile.write(response.getvalue())
 
 class Server(object):
@@ -36,7 +38,7 @@ class Server(object):
     def __init__(self, port):
         self.port = port
         self.host = '192.168.43.129'
-        ReqHandler.tok = FullTokenizer(os.path.abspath('/home/daniel/Desktop/DoctorRobert/Backend/Cluster/DocNet/tokenizer/vocab.txt'))
+        ReqHandler.tok = FullTokenizer(os.path.abspath('/home/daniel/Desktop/DoctorRobert/Backend/Cluster/tokenizer/vocab.txt'))
         self.httpserver = HTTPServer((self.host, self.port), ReqHandler)
 
     def start(self):
