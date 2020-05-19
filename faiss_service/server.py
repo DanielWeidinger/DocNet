@@ -33,7 +33,7 @@ class ReqHandler(BaseHTTPRequestHandler):
                 topk=body['topk']
 
             answer = self.topK.predict(embedding, topk=topk)
-
+            
             response = BytesIO()
             response.write(str.encode(json.dumps(answer)))
             self.wfile.write(response.getvalue())

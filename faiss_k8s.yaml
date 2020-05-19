@@ -26,9 +26,12 @@ spec:
     spec:
       containers:
         - name: faiss-container
-          image: gcr.io/dobert-277308/faiss@sha256:1a738ce6f6b5cb263ec713071eb7efa9844b70917d49662d271c3fd48273f88e
+          image: gcr.io/dobert-277308/faiss@sha256:c0f14ed16945ec3d373cd1ed0af99445e7abcb344207afd93f2f9c3b5e5b0b43
           ports:
             - containerPort: 7000
+          resources:
+            limits:
+              memory: "2Gi"
 ---
 apiVersion: v1
 kind: Service
