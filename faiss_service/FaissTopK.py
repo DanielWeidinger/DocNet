@@ -22,11 +22,20 @@ class FaissTopK(object):
         #     answer_bert = p.map(eval, self.df["A_FFNN_embeds"].tolist())
         answer_bert = self.df["A_FFNN_embeds"].tolist()
         self.df.drop(columns=["A_FFNN_embeds"], inplace=True)
-        answer_bert = np.array(answer_bert, dtype='float32')
+        self.df.drop(columns=["Q_FFNN_embeds"], inplace=True)
+        #del self.df
+        #answer_bert = np.array(answer_bert, dtype='float32')
 
-        self.answer_index = faiss.IndexFlatIP(answer_bert.shape[-1])
+        #self.answer_index = faiss.IndexFlatIP(answer_bert.shape[-1])
+        self.answer_index = faiss.IndexFlatIP(768)
 
-        self.answer_index.add(answer_bert)
+        chunck_size = 10
+
+        for _ in answer_bert:
+            self.answer_index.add(np.array(answer_bert[:chunck_size], dtype='float32'))
+            del answer_bert[:chunck_size]
+
+        #self.answer_index.add(answer_bert)
 
         del answer_bert
 
